@@ -103,7 +103,7 @@ ggplot(vars, aes(SAMPLE_VARIANT_AF, IBPC_VARIANT_AF)) +
     facet_grid(POOL_ID~.) + 
     ylab("IBPC read fraction variant support") + 
     xlab("Sample variant AF") + 
-    ggtitle("Sample variant AF and IBPC read fraction variant support\ndistributions (pool-wise)") + 
+    ggtitle("Sample variant AF and IBPC read fraction variant support values\n (pool-wise)") + 
     scale_y_continuous(breaks = 0.2*c(0:5)) + 
     scale_x_continuous(breaks = 0.1*c(0:10)) + 
     coord_cartesian(xlim=c(0,1), ylim=c(0,1)) +
