@@ -91,7 +91,7 @@ Example of a basic plot for visualizing the IBPC calculation results:
 ```
 library(ggplot2)
 library(cowplot)
-library("plyr")
+library(plyr)
 
 vars <- read.table(<path to the IBPC_values.tsv results file>, header = T, sep="\t")
 
