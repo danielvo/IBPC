@@ -1,6 +1,6 @@
-# Calculation of IBPC read fraction variant support
+# Calculation of pool-complement allelic fractions (PC-AFs, previously IBPC-RFs)
 
-The "IBPC_value_calculation.py" script calculates read fraction support of specified variants within a given sample as well as its "individual-based pool complement" ("IBPC" for short) - a set of co-multiplexed samples, which do not originate from the same individual. Information necessary for each processed sample (e.g., the sample pool of origin, the associated BAM file, the variants to be investigated) need to be provided via a mandatory configuration input file (as described below). GATK tools are used for generating raw variant support information in the relevant samples. The generated raw information subsequently serves as input for calculating variant allelic fractions and IBPC support fractions.
+The "IBPC_value_calculation.py" script calculates allelic fraction (i.e., read fraction support) of specified variants within a given sample as well as its "pool complement" ("PC" for short: a set of co-multiplexed samples, which do not originate from the same individual). Information necessary for each processed sample (e.g., the sample pool of origin, the associated BAM file, the variants to be investigated) need to be provided via a mandatory configuration input file (as described below). GATK tools are used for generating raw variant support information in the relevant samples. The generated raw information subsequently serves as input for calculating sample allelic fractions and pool complement allelic fractions.
 
 ## Command-line arguments
 
@@ -54,9 +54,9 @@ The configuration file can contain any number of comment/header lines (beginning
 3) sample ID: a value identifying given sample;
 4) individual ID: a value identifying the individual, from which the given sample originates (the value is used for determining individual-based sample pool complements);
 5) BAM file path: the path to given sample's alignment file in the BAM format;
-6) VCF file path: the path to given sample's variant call file in the VCF format (please note that all variants listed in the VCF file will be annotated with IBPC values);
+6) VCF file path: the path to given sample's variant call file in the VCF format (please note that all variants listed in the VCF file will be annotated with PC-AF values);
 7) contamination values: given sample's contamination level (passed to the final output, but not utilized for any calculations);
-8) contaminant-only status: a flag indicating whether given sample should be used as a contaminantion source only (if the supplied value is "Y"), any value other than "Y" will lead to IBPC calculation for given sample's variants; values in columns 6) and 7) are currently unused for samples that serve only as contamination sources.
+8) contaminant-only status: a flag indicating whether given sample should be used as a contaminantion source only (if the supplied value is "Y"), any value other than "Y" will lead to PC-AF calculation for given sample's variants; values in columns 6) and 7) are currently unused for samples that serve only as contamination sources.
 
 All values are treated as string, even though downstream processing can benefit from sample pool size and contamination values being specified in int- and float-like strings, respectively.
 
@@ -81,12 +81,12 @@ The following output is created in the specified output directory:
 - a subdirectory for each sample pool (i.e., for each unique value in column 1 of the input configuration file); every subdirectory should contain GATK-generated pileup results/logs for each sample from a given pool (with the exception of samples marked as contaminant-only);
 - a GATK-compatible interval file per sample pool (includes interval information for variants present in any sample of the pool, with the exception of samples marked as contaminant-only; the intervals are used by GATK during pileup generation);
 - bash script file called "pileup_commands.sh", which is used for running all GATK pileup commands necessary for the analysis;
-- results file called "IBPC_values.tsv" with IBPC-annotation information for all processed variants (includes per-sample variant-level allelic fraction and IBPC read fraction information, as well as information about the associated sample and sample pool).
+- results file called "IBPC_values.tsv" with sample- and pool-related annotation for all processed variants (includes per-sample variant-level allelic fraction and PC-AF values, as well as information about the associated sample and sample pool).
 
 The code has been run with Python 2.6.6.
 
 ## A basic plot based on the script's output
-Example of a basic plot for visualizing the IBPC calculation results:
+Example of a basic plot for visualizing the calculation results:
 
 ```
 library(ggplot2)
@@ -101,9 +101,9 @@ ggplot(vars, aes(SAMPLE_VARIANT_AF, IBPC_VARIANT_AF)) +
     geom_point(col="black", size=0.3) + 
     coord_cartesian(xlim=c(0,1), ylim=c(0,1.19)) + 
     facet_grid(POOL_ID~.) + 
-    ylab("IBPC read fraction variant support") + 
+    ylab("PC-AF") + 
     xlab("Sample variant AF") + 
-    ggtitle("Sample variant AF and IBPC read fraction variant support values\n (pool-wise)") + 
+    ggtitle("Sample variant AF and PC-AF values\n (pool-wise)") + 
     scale_y_continuous(breaks = 0.2*c(0:5)) + 
     scale_x_continuous(breaks = 0.1*c(0:10)) + 
     coord_cartesian(xlim=c(0,1), ylim=c(0,1)) +
